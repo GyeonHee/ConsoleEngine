@@ -17,10 +17,12 @@ public:
 	static Vector2 One;
 	static Vector2 Up;
 	static Vector2 Right;
-private:
+
+public:
 	int x = 0;
 	int y = 0;
 
+private:
 	// 문자열 변수
 	char* value = nullptr;
 };

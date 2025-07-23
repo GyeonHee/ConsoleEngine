@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include <iostream>
+#include "Level/Level.h"
 // 2가지
 // 윈도우즈
 // 단순 입력 처리(키보드)
@@ -11,6 +12,12 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+	// 레벨 삭제
+	if (mainLevel)
+	{
+		delete mainLevel;
+		mainLevel = nullptr;
+	}
 }
 
 void Engine::Run()
@@ -59,13 +66,49 @@ void Engine::Run()
 		// 고정 프레임
 		if (deltaTime >= oneFrameTime)
 		{
-			Update(deltaTime);
+			BeginPlay();
+			Tick(deltaTime);
 			Render();
 
 			// 시간 업데이트
 			previousTime = currentTime;
+
+			// 현재 프레임의 입력을 기록
+			for (int i = 0; i < 255; ++i)
+			{
+				keyStates[i].previousKeyDown 
+					= keyStates[i].isKeyDown;
+			}
 		}		
 	}
+}
+
+void Engine::AddLevel(Level* newLevel)
+{
+	// 기존에 있던 레벨은 제거
+	if (mainLevel)
+	{
+		delete mainLevel;
+	}
+
+	mainLevel = newLevel;
+}
+
+bool Engine::GetKey(int keyCode)
+{
+	return keyStates[keyCode].isKeyDown;
+}
+
+bool Engine::GetKeyDown(int keyCode)
+{
+	return !keyStates[keyCode].previousKeyDown 
+		&& keyStates[keyCode].isKeyDown;
+}
+
+bool Engine::GetKeyUp(int keyCode)
+{
+	return keyStates[keyCode].previousKeyDown
+		&& !keyStates[keyCode].isKeyDown;
 }
 
 void Engine::Quit()
@@ -76,20 +119,63 @@ void Engine::Quit()
 
 void Engine::ProcessInput()
 {
-	// ESC키 눌림 확인
-	if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+	// 키 입력 확인
+	for (int i = 0; i < 255; ++i)
 	{
-		Quit();
+		keyStates[i].isKeyDown 
+			= GetAsyncKeyState(i) & 0x8000;
+	}
+
+	//// ESC키 눌림 확인
+	//if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+	//{
+	//	Quit();
+	//}
+}
+
+void Engine::BeginPlay()
+{
+	if (mainLevel)
+	{
+		mainLevel->BeginPlay();
 	}
 }
 
-void Engine::Update(float deltaTime)
+void Engine::Tick(float deltaTime)
 {
-	std::cout << "DeltaTime : " << deltaTime 
+	/*std::cout << "DeltaTime : " << deltaTime 
 		<< ", FPS : " << (1.0f / deltaTime)
-		<<"\n";
+		<<"\n";*/
+
+	// 레벨 업데이트
+	if (mainLevel)
+	{
+		mainLevel->Tick(deltaTime);
+	}
+
+	if (GetKeyDown(VK_ESCAPE))
+	{
+		Quit();
+	}
+
+	/*if (GetKeyDown('A'))
+	{
+		std::cout << "KeyDown\n";
+	}
+	if (GetKey('A'))
+	{
+		std::cout << "Key\n";
+	}
+	if (GetKeyUp('A'))
+	{
+		std::cout << "KeyUp\n";
+	}*/
 }
 
 void Engine::Render()
 {
+	if (mainLevel)
+	{
+		mainLevel->Render();
+	}
 }
