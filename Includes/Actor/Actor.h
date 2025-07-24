@@ -1,6 +1,7 @@
 #pragma once
 #include "Core.h"
 #include "Math/Vector2.h"
+#include "RTTI.h"
 
 // 물체 뭘해야할까?를 정의
 // 위치 점령
@@ -8,8 +9,9 @@
 // 엔진의 이벤트 함수 호출
 // BeginPlay / Tick / Draw
 
-class Engine_API Actor
+class Engine_API Actor : public RTTI
 {
+	RTTI_DECLARATIONS(Actor, RTTI)
 public:
 	Actor();
 	virtual ~Actor();
