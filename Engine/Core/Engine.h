@@ -3,8 +3,7 @@
 #include <Windows.h>
 
 /*
-* Todo: 2025년 7월 24일 작업할 것
-* - RTTI 적용
+* Todo: 2025년 7월 25일 작업할 것
 * - Engine 싱글톤 구현
 */
 
@@ -37,6 +36,9 @@ public:
 	// 종료 함수
 	void Quit();
 
+	// 싱글톤 접근 함수
+	static Engine& Get();
+
 private:
 	void ProcessInput();
 
@@ -53,4 +55,7 @@ private:
 
 	// 메인 레벨
 	Level* mainLevel = nullptr;
+
+	// 싱글톤 변수
+	static Engine* instance;
 };
