@@ -7,7 +7,19 @@ Level::Level()
 }
 Level::~Level()
 {
+	// null 확인 후 액터 제거
+	for (Actor* actor : actors)
+	{
+		//// null 확인 후 Actor 제거
+		//if (actor)
+		//{
+		//	// 삭제 및 메모리 정리
+		//	delete actor;
+		//	actor = nullptr;
+		//}
 
+		SafeDelete(actor);
+	}
 }
 
 // 레벨에 액터를 추가할 때 사용
