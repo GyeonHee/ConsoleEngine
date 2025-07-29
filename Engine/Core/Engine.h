@@ -8,7 +8,7 @@ class Engine_API Engine
 {
 public:
 	Engine();
-	~Engine();
+	virtual ~Engine();
 
 	// 엔진 실행 함수
 	void Run();
@@ -30,7 +30,7 @@ private:
 	void Tick(float deltaTime = 0.0f);
 	void Render();
 
-private:
+protected:
 	// 엔진 종료 플래그
 	bool isQuit = false;
 
