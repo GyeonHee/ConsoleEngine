@@ -2,13 +2,24 @@
 #include <iostream>
 #include "Level/Level.h"
 #include <Windows.h>
-// 2가지
-// 윈도우즈
-// 단순 입력 처리(키보드)
-// 타이머(시간 계산)
+#include "Utils/Utils.h"
+#include "Input.h"
+
 
 // 정적 변수 초기화
 Engine* Engine::instance = nullptr;
+
+BOOL WINAPI ConsoleMessageProcedure(DWORD CtrlType)
+{
+	switch (CtrlType)
+	{
+	case CTRL_CLOSE_EVENT:
+		// Engine 메모리 해제
+
+		Engine::Get().CleanUp();
+		return false;
+	}
+}
 
 Engine::Engine()
 {
@@ -19,18 +30,13 @@ Engine::Engine()
 	info.bVisible = false;
 	info.dwSize = 1;
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
-	
-	
+
+	SetConsoleCtrlHandler(ConsoleMessageProcedure, TRUE);
 }
 
 Engine::~Engine()
 {
-	// 레벨 삭제
-	if (mainLevel)
-	{
-		delete mainLevel;
-		mainLevel = nullptr;
-	}
+	CleanUp();
 }
 
 void Engine::Run()
@@ -74,7 +80,7 @@ void Engine::Run()
 			/ (float)frequency.QuadPart;
 
 		// 입력은 최대한 빨리
-		ProcessInput();
+		input.ProcessInput();
 
 		// 고정 프레임
 		if (deltaTime >= oneFrameTime)
@@ -87,19 +93,12 @@ void Engine::Run()
 			previousTime = currentTime;
 
 			// 현재 프레임의 입력을 기록
-			for (int i = 0; i < 255; ++i)
-			{
-				keyStates[i].previousKeyDown 
-					= keyStates[i].isKeyDown;
-			}
+			input.SavePreviousKeyStates();
 		}		
 	}
 
-	// 정리
-	// 모든 텍스트 색상
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
-		FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
-	);
+	// 정리(텍스트 색상 원래대로 돌려놓기)
+	Utils::SetConsoleTextColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 }
 
 void Engine::AddLevel(Level* newLevel)
@@ -113,21 +112,9 @@ void Engine::AddLevel(Level* newLevel)
 	mainLevel = newLevel;
 }
 
-bool Engine::GetKey(int keyCode)
+void Engine::CleanUp()
 {
-	return keyStates[keyCode].isKeyDown;
-}
-
-bool Engine::GetKeyDown(int keyCode)
-{
-	return !keyStates[keyCode].previousKeyDown 
-		&& keyStates[keyCode].isKeyDown;
-}
-
-bool Engine::GetKeyUp(int keyCode)
-{
-	return keyStates[keyCode].previousKeyDown
-		&& !keyStates[keyCode].isKeyDown;
+	SafeDelete(instance);
 }
 
 void Engine::Quit()
@@ -139,22 +126,6 @@ void Engine::Quit()
 Engine& Engine::Get()
 {
 	return *instance;
-}
-
-void Engine::ProcessInput()
-{
-	// 키 입력 확인
-	for (int i = 0; i < 255; ++i)
-	{
-		keyStates[i].isKeyDown 
-			= GetAsyncKeyState(i) & 0x8000;
-	}
-
-	//// ESC키 눌림 확인
-	//if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
-	//{
-	//	Quit();
-	//}
 }
 
 void Engine::BeginPlay()
@@ -198,9 +169,10 @@ void Engine::Tick(float deltaTime)
 
 void Engine::Render()
 {
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+	/*SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
 		FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED
-	);
+	);*/
+	Utils::SetConsoleTextColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 
 	if (mainLevel)
 	{
