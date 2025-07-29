@@ -1,6 +1,7 @@
 #include "Level.h"
 #include "Actor/Actor.h"
 
+
 Level::Level()
 {
 
@@ -29,7 +30,7 @@ void Level::AddActor(Actor* newActor)
 
 	// push_back / emplace_back : 배열 맨 뒤에 새로운 항목 추가하는 함수
 	actors.emplace_back(newActor);
-	//actors.push_back(newActor);
+	newActor->SetOwner(this);
 }
 
 // 이벤트 함수
