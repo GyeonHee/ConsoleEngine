@@ -15,7 +15,6 @@ BOOL WINAPI ConsoleMessageProcedure(DWORD CtrlType)
 	{
 	case CTRL_CLOSE_EVENT:
 		// Engine 메모리 해제
-
 		Engine::Get().CleanUp();
 		return false;
 	}

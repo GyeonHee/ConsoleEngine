@@ -48,10 +48,7 @@ void Player::Tick(float deltaTime)
 	if (Input::Get().GetKeyDown(VK_RIGHT))
 	{
 		// 이동 전에 이동 가능한지 확인
-		if (canPlayerMoveInterface->CanPlayerMove(
-			Position(),
-			Vector2(Position().x + 1, Position().y))
-			)
+		if (canPlayerMoveInterface->CanPlayerMove(Position(), Vector2(Position().x + 1, Position().y)))
 		{
 			Vector2 position = Position();
 			position.x += 1;
@@ -60,20 +57,29 @@ void Player::Tick(float deltaTime)
 	}
 	if (Input::Get().GetKeyDown(VK_LEFT))
 	{
-		Vector2 position = Position();
-		position.x -= 1;
-		SetPosition(position);
+		if (canPlayerMoveInterface->CanPlayerMove(Position(), Vector2(Position().x - 1, Position().y)))
+		{
+			Vector2 position = Position();
+			position.x -= 1;
+			SetPosition(position);
+		}
 	}
 	if (Input::Get().GetKeyDown(VK_UP))
 	{
-		Vector2 position = Position();
-		position.y -= 1;
-		SetPosition(position);
+		if (canPlayerMoveInterface->CanPlayerMove(Position(), Vector2(Position().x, Position().y - 1)))
+		{
+			Vector2 position = Position();
+			position.y -= 1;
+			SetPosition(position);
+		}
 	}
 	if (Input::Get().GetKeyDown(VK_DOWN))
 	{
-		Vector2 position = Position();
-		position.y += 1;
-		SetPosition(position);
+		if (canPlayerMoveInterface->CanPlayerMove(Position(), Vector2(Position().x, Position().y + 1)))
+		{
+			Vector2 position = Position();
+			position.y += 1;
+			SetPosition(position);
+		}
 	}
 }
