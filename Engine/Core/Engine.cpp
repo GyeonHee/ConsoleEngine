@@ -18,6 +18,8 @@ BOOL WINAPI ConsoleMessageProcedure(DWORD CtrlType)
 		Engine::Get().CleanUp();
 		return false;
 	}
+
+	return false;
 }
 
 Engine::Engine()
@@ -113,7 +115,8 @@ void Engine::AddLevel(Level* newLevel)
 
 void Engine::CleanUp()
 {
-	SafeDelete(instance);
+	// 레벨 삭제
+	SafeDelete(mainLevel);
 }
 
 void Engine::Quit()

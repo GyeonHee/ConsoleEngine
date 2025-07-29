@@ -17,7 +17,7 @@ public:
 	void AddLevel(Level* newLevel);
 
 	// 메모리 해제 함수
-	void CleanUp();
+	virtual void CleanUp();
 
 	// 종료 함수
 	void Quit();

@@ -32,9 +32,13 @@ struct MenuItem
 
 class MenuLevel : public Level
 {
+	RTTI_DECLARATIONS(MenuLevel, Level)
 public:
 	MenuLevel();
 	~MenuLevel();
+
+	virtual void Tick(float deltaTime) override;
+	virtual void Render() override;
 
 private:
 	// 현재 선택된 아이템의 인덱스
